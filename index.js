@@ -15,6 +15,13 @@ app.use((req, res, next) => {
     next();
 });
 
+// Health check for uptime pings — must be registered before the proxy
+// middleware so it isn't forwarded to Backpack. Express answers HEAD
+// requests to GET routes with headers only (no body).
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+});
+
 app.use('/', createProxyMiddleware({
     target: targetUrl,
     changeOrigin: true
